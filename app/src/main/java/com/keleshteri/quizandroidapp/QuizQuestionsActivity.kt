@@ -1,6 +1,7 @@
 package com.keleshteri.quizandroidapp
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,7 @@ class QuizQuestionsActivity : AppCompatActivity(), OnClickListener {
     private var mQuestionsList: ArrayList<Question>? =null
     private var mSelectedOptionPosition:Int =0
     private var mCorrectAnswers: Int=0
+    private var mUserName: String? =null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +33,11 @@ class QuizQuestionsActivity : AppCompatActivity(), OnClickListener {
         binding = ActivityQuizQuestionsBinding.inflate(layoutInflater)
         //setContentView(R.layout.activity_quiz_questions)
         setContentView(binding.root)
+
+        window.decorView.systemUiVisibility= View.SYSTEM_UI_FLAG_FULLSCREEN
+
+        //
+        mUserName = intent.getStringExtra(Constants.USER_NAME)
 
         //get all Questions
         mQuestionsList = Constants.getQuestions()
@@ -191,7 +198,12 @@ class QuizQuestionsActivity : AppCompatActivity(), OnClickListener {
                         mCurrentPosition <= mQuestionsList!!.size->{
                             setQuestion()
                         }else ->{
-                            Toast.makeText(this,"You have successfully completed the Quiz",Toast.LENGTH_SHORT).show()
+                          val intent = Intent(this,ResultActivity::class.java)
+                        intent.putExtra(Constants.USER_NAME,mUserName)
+                        intent.putExtra(Constants.CORRECT_ANSWERS,mCorrectAnswers)
+                        intent.putExtra(Constants.TOTAL_QUESTIONS,mQuestionsList!!.size)
+                        startActivity(intent)
+                        finish()
                         }
                     }
                     //check Else selected option !=0
