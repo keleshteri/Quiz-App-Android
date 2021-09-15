@@ -52,11 +52,19 @@ class QuizQuestionsActivity : AppCompatActivity(), OnClickListener {
      */
     private fun setQuestion(){
         /**  **/
-        mCurrentPosition=1
+//        mCurrentPosition=1
         val question = mQuestionsList!![mCurrentPosition-1]
 
         //set default style for options
         defaultOptionsView()
+
+        //set btnSubmit text
+        if(mCurrentPosition== mQuestionsList!!.size){
+            binding.btnSubmit.text="FINISH"
+        }else{
+            binding.btnSubmit.text="SUBMIT"
+        }
+
 
 
         binding.progressBar.progress= mCurrentPosition
@@ -115,8 +123,39 @@ class QuizQuestionsActivity : AppCompatActivity(), OnClickListener {
             this,
             R.drawable.selected_option_border_bg
         )
+    }
 
+    /**
+     * check answer and set drawableView
+     */
+    private fun answerView(answer:Int, drawableView:Int){
 
+        when(answer){
+            //if answer options 1
+            1->{
+                binding.tvOptionOne.background= ContextCompat.getDrawable(
+                    this,drawableView
+                )
+            }
+            //if answer options 2
+            2->{
+                binding.tvOptionTwo.background= ContextCompat.getDrawable(
+                    this,drawableView
+                )
+            }
+            //if answer options 3
+            3->{
+                binding.tvOptionThree.background= ContextCompat.getDrawable(
+                    this,drawableView
+                )
+            }
+            //if answer options 4
+            4->{
+                binding.tvOptionFour.background= ContextCompat.getDrawable(
+                    this,drawableView
+                )
+            }
+        }
     }
 
     /**
@@ -124,17 +163,55 @@ class QuizQuestionsActivity : AppCompatActivity(), OnClickListener {
      */
     override fun onClick(v: View?) {
         when(v?.id){
+            //if click option 1
             R.id.tv_option_one ->{
                 selectedOptionView(binding.tvOptionOne,1)
             }
+            //if click option 2
             R.id.tv_option_two ->{
                 selectedOptionView(binding.tvOptionTwo,2)
             }
+            //if click option 3
             R.id.tv_option_three ->{
                 selectedOptionView(binding.tvOptionThree,3)
             }
+            //if click option 4
             R.id.tv_option_four ->{
                 selectedOptionView(binding.tvOptionFour,4)
+            }
+            //if click on submit
+            R.id.btn_submit ->{
+                //check if selected option
+                if(mSelectedOptionPosition ==0){
+                    mCurrentPosition++
+
+                    //check
+                    when{
+                        mCurrentPosition <= mQuestionsList!!.size->{
+                            setQuestion()
+                        }else ->{
+                            Toast.makeText(this,"You have successfully completed the Quiz",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    //check Else selected option !=0
+                }else{
+                    val question=mQuestionsList?.get(mCurrentPosition-1)
+                    //check correctAnswer with SelectedOption
+                    if (question!!.correctAnswer != mSelectedOptionPosition){
+                        answerView(mSelectedOptionPosition,R.drawable.wrong_option_border_bg)
+                    }
+                    //set style correctAnswer
+                    answerView(question.correctAnswer,R.drawable.correct_option_border_bg)
+
+                    //check if is last Question
+                    if (mCurrentPosition==mQuestionsList!!.size){
+                        binding.btnSubmit.text="FINISH"
+                    }else{
+                        binding.btnSubmit.text="GO TO NEXT QUESTION"
+                    }
+                    //set
+                    mSelectedOptionPosition=0
+                }
             }
         }
     }
